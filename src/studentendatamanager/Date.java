@@ -12,9 +12,9 @@ public class Date
 
     public Date(int day, int month, int year)
     {
-        this.day = day;
-        this.month = month;
-        this.year = year;
+        this.day = cap(day, 1, 31);
+        this.month = cap(month, 1, 12);
+        this.year = cap(year, 1850, 2020);
     }
 
     public int getDay()
@@ -31,5 +31,19 @@ public class Date
     {
         return year;
     }
-
+    
+    public static Date getDefaultDate()
+    {
+        return new Date(1, 1, 1950);
+    }
+    
+    private int cap(int value, int min, int max)
+    {
+        if(value < min)
+            return min;
+        else if(value > max)
+            return max;
+        else
+            return value;
+    }
 }

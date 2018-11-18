@@ -10,25 +10,26 @@ import java.util.ArrayList;
 public class Student
 {
 
-    private String name;
+    private String firstName, lastName;
     private int idNumber;
     private Date birthDate, enrollDate;
     private ArrayList<Course> courses;
     private int studyScore;
     private int year;
 
-    public Student(String name, int idNumber, Date birthDate, Date enrollDate)
+    public Student(String firstName, String lastName, int idNumber, Date birthDate, Date enrollDate)
     {
-        this.name = name;
+        this.firstName = firstName;
+        this.lastName = lastName;
         this.idNumber = idNumber;
         this.birthDate = birthDate;
         this.enrollDate = enrollDate;
         courses = new ArrayList<>();
     }
 
-    public String getName()
+    public String getFirstName()
     {
-        return name;
+        return firstName;
     }
 
     public int getIdNumber()

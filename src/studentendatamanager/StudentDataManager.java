@@ -27,14 +27,8 @@ public class StudentDataManager extends Application
 {
 
     private final static String TITLE = "StudentApp";
-    private static final String LOGIN = "login";
     private static int id = 10000;
-    private ArrayList<Student> students;
-
-    private void init(String[] args)
-    {
-        students = new ArrayList<>();
-    }
+    private ArrayList<Student> students = new ArrayList();
 
     @Override
     public void start(Stage primaryStage) throws Exception
@@ -42,88 +36,170 @@ public class StudentDataManager extends Application
         primaryStage.setTitle(TITLE);
         
         //Login Scene
-        GridPane grid = new GridPane();
-        grid.setAlignment(Pos.CENTER);
-        grid.setHgap(10);
-        grid.setVgap(10);
-        grid.setPadding(new Insets(25, 25, 25, 25));
+        GridPane loginGrid = new GridPane();
+        loginGrid.setAlignment(Pos.CENTER);
+        loginGrid.setHgap(10);
+        loginGrid.setVgap(10);
+        loginGrid.setPadding(new Insets(25, 25, 25, 25));
 
         Text scenetitle = new Text("Welkom");
         scenetitle.setFont(Font.font("Tahoma", FontWeight.NORMAL, 30));
-        grid.add(scenetitle, 0, 0, 2, 1);
+        loginGrid.add(scenetitle, 0, 0, 2, 1);
 
         Label userName = new Label("Gebruikersnaam:");
-        grid.add(userName, 0, 1);
+        loginGrid.add(userName, 0, 1);
 
         TextField userTextField = new TextField();
-        grid.add(userTextField, 1, 1);
+        loginGrid.add(userTextField, 1, 1);
 
         Label pw = new Label("Wachtwoord:");
-        grid.add(pw, 0, 2);
+        loginGrid.add(pw, 0, 2);
 
         PasswordField pwBox = new PasswordField();
-        grid.add(pwBox, 1, 2);
+        loginGrid.add(pwBox, 1, 2);
 
         Button btn = new Button("Log in");
         HBox hbBtn = new HBox(10);
         hbBtn.setAlignment(Pos.BOTTOM_RIGHT);
         hbBtn.getChildren().add(btn);
-        grid.add(hbBtn, 1, 4);
+        loginGrid.add(hbBtn, 1, 4);
 
         //grid.setGridLinesVisible(true);
-        Scene scene = new Scene(grid, 400, 275);
+        Scene loginScene = new Scene(loginGrid, 400, 275);
         
-        //Scene2
-        GridPane grid2 = new GridPane();
-        grid2.setAlignment(Pos.CENTER);
-        grid2.setHgap(10);
-        grid2.setVgap(10);
-        grid2.setPadding(new Insets(25, 25, 25, 25));
+        //Input Scene
+        GridPane inputGrid = new GridPane();
+        inputGrid.setAlignment(Pos.CENTER);
+        inputGrid.setHgap(10);
+        inputGrid.setVgap(10);
+        inputGrid.setPadding(new Insets(25, 25, 25, 25));
 
         Text scenetitle2 = new Text("Voeg studenten toe");
         scenetitle2.setFont(Font.font("Tahoma", FontWeight.NORMAL, 30));
-        grid2.add(scenetitle2, 0, 0, 2, 1);
+        inputGrid.add(scenetitle2, 0, 0, 2, 1);
         
-        Label userName2 = new Label("Naam Student:");
-        grid2.add(userName2, 0, 1);
+        Label firstNameLabel = new Label("Voornaam: ");
+        inputGrid.add(firstNameLabel, 0, 1);
+        
+        Label lastNameLabel = new Label("Achternaam: ");
+        inputGrid.add(lastNameLabel, 0, 2);
 
-        TextField userTextField2 = new TextField();
-        grid2.add(userTextField2, 1, 1);
+        TextField firstNameField = new TextField();
+        inputGrid.add(firstNameField, 1, 1);
+        
+        TextField lastNameField = new TextField();
+        inputGrid.add(lastNameField, 1, 2);
 
-        Button btn2 = new Button("Voeg toe");
-        HBox hbBtn2 = new HBox(10);
-        hbBtn2.setAlignment(Pos.BOTTOM_RIGHT);
-        hbBtn2.getChildren().add(btn2);
-        grid2.add(hbBtn2, 1, 4);       
+        Button addButton = new Button("Voeg toe");
+        HBox addButtonBox = new HBox(10);
+        addButtonBox.setAlignment(Pos.BOTTOM_RIGHT);
+        addButtonBox.getChildren().add(addButton);
+        inputGrid.add(addButtonBox, 1, 4);  
+        
+        Button logoutButton = new Button("Log uit");
+        HBox logoutButtonBox = new HBox(10);
+        logoutButtonBox.setAlignment(Pos.BOTTOM_LEFT);
+        logoutButtonBox.getChildren().add(logoutButton);
+        inputGrid.add(logoutButtonBox, 0, 4);
         
         final Text actiontarget = new Text();
-        grid2.add(actiontarget, 1, 6);
+        inputGrid.add(actiontarget, 1, 6);
 		
 		//grid2.setGridLinesVisible(true);
 		
-        Scene scene2 = new Scene(grid2, 400, 275);
+        Scene inputScene = new Scene(inputGrid, 400, 275);
+        
+        //Student scene
+        GridPane studentGrid = new GridPane();
+        studentGrid.setAlignment(Pos.CENTER);
+        studentGrid.setHgap(10);
+        studentGrid.setVgap(10);
+        studentGrid.setPadding(new Insets(25, 25, 25, 25));
+        
+        Text studentTitle = new Text("Welkom " + "student");
+        scenetitle.setFont(Font.font("Tahoma", FontWeight.NORMAL, 30));
+        studentGrid.add(studentTitle, 0, 0, 2, 1);
+        
+        Scene studentScene = new Scene(studentGrid, 400, 275);
+        Button logoutButton2 = new Button("Log uit");
+        HBox logoutButtonBox2 = new HBox(10);
+        logoutButtonBox2.setAlignment(Pos.BOTTOM_LEFT);
+        logoutButtonBox2.getChildren().add(logoutButton2);
+        studentGrid.add(logoutButtonBox2, 0, 4);
         
         btn.setOnAction((ActionEvent e) ->
         {
-            primaryStage.setScene(scene2);
+            String userNameText = userTextField.getText();
+            if(userNameText.equals("Admin"))
+            {
+                primaryStage.setScene(inputScene);
+            }
+            else if(userNameText.startsWith("s"))
+            {
+                String idString = userNameText.substring(1, userNameText.length());
+                if(isNumeric(idString))
+                {
+                    int idNumber = Integer.parseInt(idString);
+                    if(studentInSystem(idNumber))
+                    {
+                        primaryStage.setScene(studentScene);
+                    }
+                }
+            }
         });
         
-        btn2.setOnAction((ActionEvent e) ->
+        addButton.setOnAction((ActionEvent e) ->
         {
             actiontarget.setFill(Color.FIREBRICK);
-            String name = userTextField2.getText();
-            userTextField2.setText("");
-            actiontarget.setText(name + " toegevoegd");
+            String firstName = firstNameField.getText();
+            String lastName = lastNameField.getText();
+            firstNameField.setText("");
+            lastNameField.setText("");
+            Student student = new Student(firstName, lastName, id, Date.getDefaultDate(), Date.getDefaultDate());
+            id++;
+            students.add(student);
+            actiontarget.setText(firstName + " " + lastName + " toegevoegd");
         });
         
-        primaryStage.setScene(scene);
+        logoutButton.setOnAction((ActionEvent e) ->
+        {
+            primaryStage.setScene(loginScene);
+        });
+        
+        logoutButton2.setOnAction((ActionEvent e) ->
+        {
+            primaryStage.setScene(loginScene);
+        });
+        
+        primaryStage.setScene(loginScene);
         primaryStage.show();
+    }
+    
+    private boolean studentInSystem(int id)
+    {
+        for(Student s: students)
+        {
+            if(s.getIdNumber() == id)
+                return true;
+        }
+        return false;
+    }
+    
+    public static boolean isNumeric(String str)  
+    {  
+      try  
+      {  
+        int i = Integer.parseInt(str);  
+      }  
+      catch(NumberFormatException nfe)  
+      {  
+        return false;  
+      }  
+      return true;  
     }
 
     public static void main(String[] args)
     {
-        StudentDataManager app = new StudentDataManager();
-        app.init(args);
         launch(args);
     }
 
