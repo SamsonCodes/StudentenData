@@ -6,6 +6,7 @@
 package studentendatamanager;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 public class Student
 {
@@ -25,6 +26,7 @@ public class Student
         this.birthDate = birthDate;
         this.enrollDate = enrollDate;
         courses = new ArrayList<>();
+        System.out.println(toString() + " created");
     }
 
     public String getFirstName()
@@ -81,4 +83,12 @@ public class Student
     {
         this.year = year;
     }
+
+    @Override
+    public String toString()
+    {
+        return "Student{" + "firstName=" + firstName + ", lastName=" + lastName + ", idNumber=" + idNumber + ", birthDate=" + birthDate + ", enrollDate=" + enrollDate + ", courses=" + courses + ", studyScore=" + studyScore + ", year=" + year + '}';
+    }
+    
+    
 }

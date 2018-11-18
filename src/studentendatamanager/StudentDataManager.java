@@ -5,7 +5,13 @@
  */
 package studentendatamanager;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.Locale;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
@@ -29,6 +35,7 @@ public class StudentDataManager extends Application
     private final static String TITLE = "StudentApp";
     private static int id = 10000;
     private ArrayList<Student> students = new ArrayList();
+    private SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH);
 
     @Override
     public void start(Stage primaryStage) throws Exception
@@ -80,15 +87,24 @@ public class StudentDataManager extends Application
         
         Label firstNameLabel = new Label("Voornaam: ");
         inputGrid.add(firstNameLabel, 0, 1);
-        
-        Label lastNameLabel = new Label("Achternaam: ");
-        inputGrid.add(lastNameLabel, 0, 2);
 
         TextField firstNameField = new TextField();
         inputGrid.add(firstNameField, 1, 1);
         
+        Label lastNameLabel = new Label("Achternaam: ");
+        inputGrid.add(lastNameLabel, 0, 2);
+        
         TextField lastNameField = new TextField();
         inputGrid.add(lastNameField, 1, 2);
+        
+        Label dateLabel = new Label("Geboorte datum: ");
+        inputGrid.add(dateLabel, 0, 3);
+        
+        TextField dateField = new TextField();
+        dateField.setText("dd/MM/yyyy");
+        inputGrid.add(dateField, 1, 3);
+        
+        
 
         Button addButton = new Button("Voeg toe");
         HBox addButtonBox = new HBox(10);
@@ -149,16 +165,45 @@ public class StudentDataManager extends Application
         });
         
         addButton.setOnAction((ActionEvent e) ->
-        {
-            actiontarget.setFill(Color.FIREBRICK);
-            String firstName = firstNameField.getText();
+        {     
+            boolean add = true;
+            Date birthDate = new Date();
+            String firstName = firstNameField.getText();            
             String lastName = lastNameField.getText();
             firstNameField.setText("");
             lastNameField.setText("");
-            Student student = new Student(firstName, lastName, id, Date.getDefaultDate(), Date.getDefaultDate());
-            id++;
-            students.add(student);
-            actiontarget.setText(firstName + " " + lastName + " toegevoegd");
+            String dateString = dateField.getText();
+            dateField.setText("");
+            if(firstName.isEmpty() || lastName.isEmpty() || dateString.isEmpty())
+            {
+                add = false;
+            }            
+            else
+            {  
+                try
+                {
+                    birthDate = sdf.parse(dateString);
+                }
+                catch (ParseException ex)
+                {
+                    add = false;
+                    Logger.getLogger(StudentDataManager.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+            if(add)
+            {
+                Date enrollDate = new Date();
+                Student student = new Student(firstName, lastName, id, birthDate, enrollDate);
+                id++;
+                students.add(student);
+                actiontarget.setFill(Color.DARKGREEN);
+                actiontarget.setText("s" + student.getIdNumber() +  " toegevoegd");
+            }
+            else
+            {                
+                actiontarget.setFill(Color.FIREBRICK);
+                actiontarget.setText("Ingevoerde data ongeldig!");
+            }
         });
         
         logoutButton.setOnAction((ActionEvent e) ->
