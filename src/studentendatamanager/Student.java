@@ -5,8 +5,11 @@
  */
 package studentendatamanager;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class Student
 {
@@ -17,6 +20,30 @@ public class Student
     private ArrayList<Course> courses;
     private int studyScore;
     private int year;
+    
+    public Student(String saveData)
+    {
+        this.firstName = XMLReader.getAttribute("firstName", saveData);
+        this.lastName = XMLReader.getAttribute("lastName", saveData);
+        this.idNumber = Integer.parseInt(XMLReader.getAttribute("idNumber", saveData));
+        try
+        {
+            this.birthDate = StudentDataManager.sdf.parse(XMLReader.getAttribute("birthDate", saveData));
+            this.enrollDate = StudentDataManager.sdf.parse(XMLReader.getAttribute("enrollDate", saveData));
+        }
+        catch (ParseException ex)
+        {
+            Logger.getLogger(Student.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        this.studyScore = Integer.parseInt(XMLReader.getAttribute("studyScore", saveData));
+        this.year = Integer.parseInt(XMLReader.getAttribute("year", saveData));
+        courses = new ArrayList();
+        for(String course: XMLReader.getElementPlus("courses", saveData).split(","))
+        {
+            courses.add(new Course())
+        }
+        
+    }
 
     public Student(String firstName, String lastName, int idNumber, Date birthDate, Date enrollDate)
     {
@@ -26,6 +53,7 @@ public class Student
         this.birthDate = birthDate;
         this.enrollDate = enrollDate;
         courses = new ArrayList<>();
+        year = 1;
         System.out.println(toString() + " created");
     }
 
@@ -88,6 +116,23 @@ public class Student
     public String toString()
     {
         return "Student{" + "firstName=" + firstName + ", lastName=" + lastName + ", idNumber=" + idNumber + ", birthDate=" + birthDate + ", enrollDate=" + enrollDate + ", courses=" + courses + ", studyScore=" + studyScore + ", year=" + year + '}';
+    }
+    
+    public String getSaveData()
+    {
+        String data = "<student ";
+        data += "firstName=" + firstName + " lastName=" + lastName + " idNumber=" 
+                + idNumber + " birthDate=" + StudentDataManager.sdf.format(birthDate) 
+                + " enrollDate=" + StudentDataManager.sdf.format(enrollDate) 
+                + " studyScore=" + studyScore + ", year=" + year + '>';
+        data += "<courses>";
+        for(Course c: courses)
+        {
+            data+= c.getName() + ",";
+        }
+        data += "</courses>";
+        data += "</student>";
+        return data;
     }
     
     
