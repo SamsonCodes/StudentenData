@@ -40,7 +40,13 @@ public class Student
         courses = new ArrayList();
         for(String course: XMLReader.getElementPlus("courses", saveData).split(","))
         {
-            courses.add(new Course())
+            for(Course c: Course.values())
+            {
+                if(course.equals(c.getName()))
+                {
+                    courses.add(c);
+                }
+            }
         }
         
     }
@@ -121,10 +127,10 @@ public class Student
     public String getSaveData()
     {
         String data = "<student ";
-        data += "firstName=" + firstName + " lastName=" + lastName + " idNumber=" 
-                + idNumber + " birthDate=" + StudentDataManager.sdf.format(birthDate) 
-                + " enrollDate=" + StudentDataManager.sdf.format(enrollDate) 
-                + " studyScore=" + studyScore + ", year=" + year + '>';
+        data += "firstName=\"" + firstName + "\" lastName=\"" + lastName + "\" idNumber=\"" 
+                + idNumber + "\" birthDate=\"" + StudentDataManager.sdf.format(birthDate) 
+                + "\" enrollDate=\"" + StudentDataManager.sdf.format(enrollDate) 
+                + "\" studyScore=\"" + studyScore + "\" year=\"" + year + "\">";
         data += "<courses>";
         for(Course c: courses)
         {

@@ -32,20 +32,18 @@ import javafx.stage.Stage;
 public class StudentDataManager extends Application
 {
 
-    private final static String TITLE = "StudentApp";
+    private final static String TITLE = "StudentApp", PATH = "C:\\StudentenDataManager\\";
     private static int id = 10000;
     private ArrayList<Student> students = new ArrayList();
     public final static SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH);
     private final static int FRAME_WIDTH = 500, FRAME_HEIGHT = 500;
     private Student loggedIn;
-    public final static String[] COURSE_NAMES = new String[]{"Mathematics 101", "Physics 101", "Programming 101"};
-    public final static String[] COURSE_DESCRIPTIONS = new String[]{"","",""};
-    public final static int[] COURSE_ECT = new int[]{5,5,5};
     
 
     @Override
     public void start(Stage primaryStage) throws Exception
     {
+        loadData();
         primaryStage.setTitle(TITLE);
         
         //Login Scene
@@ -215,6 +213,7 @@ public class StudentDataManager extends Application
                 students.add(student);
                 inputMessage.setFill(Color.DARKGREEN);
                 inputMessage.setText("s" + student.getIdNumber() +  " toegevoegd");
+                saveData();
             }
             else
             {                
@@ -279,6 +278,31 @@ public class StudentDataManager extends Application
                 student = s;
         }
         return student;
+    }
+    
+    private void loadData()
+    {
+        String data = DataHandler.loadData(PATH + "studentendata.txt");
+        for(String studentData: XMLReader.getElementsPlus("student", data))
+        {
+            Student student = new Student(studentData);
+            if(student.getIdNumber() >= id)
+            {
+                id = student.getIdNumber() + 1;
+            }
+            students.add(student);
+        }
+    }
+    
+    private void saveData()
+    {
+        DataHandler.createDirectory(PATH);
+        ArrayList<String> data = new ArrayList();
+        for(Student s: students)
+        {
+            data.add(s.getSaveData());
+        }
+        DataHandler.saveData(data, PATH + "studentendata.txt");
     }
 
     public static void main(String[] args)

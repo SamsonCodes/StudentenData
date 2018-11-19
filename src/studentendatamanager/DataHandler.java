@@ -99,4 +99,27 @@ public class DataHandler
         }
         return image;
     }
+    
+    public static boolean createDirectory(String dir)
+    {
+        File file = new File(dir);
+        if (!file.exists())
+        {
+            if (file.mkdir())
+            {
+                System.out.println("Directory is created!");
+                return true;
+            }
+            else
+            {
+                System.out.println("Failed to create directory!");
+                return false;
+            }
+        }
+        else
+        {
+            System.out.println("Directory already exists!");
+            return true;
+        }
+    }
 }
