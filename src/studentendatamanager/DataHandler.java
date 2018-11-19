@@ -85,6 +85,30 @@ public class DataHandler
         }
         return data;
     }
+    
+    public static ArrayList<String> loadDataList(String path)
+    {
+        ArrayList<String> data = new ArrayList();
+        try
+        {
+            FileReader fileReader = new FileReader(path);
+            BufferedReader bufferedReader = new BufferedReader(fileReader);
+            String line;
+            while ((line = bufferedReader.readLine()) != null)
+            {
+                data.add(line);
+            }
+        }
+        catch (FileNotFoundException ex)
+        {
+            Logger.getLogger(DataHandler.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        catch (IOException ex)
+        {
+            Logger.getLogger(DataHandler.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return data;
+    }
 
     public static BufferedImage loadImage(String path)
     {

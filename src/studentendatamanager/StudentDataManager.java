@@ -13,12 +13,16 @@ import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.application.Application;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
@@ -147,6 +151,24 @@ public class StudentDataManager extends Application
         logoutButtonBox2.getChildren().add(logoutButton2);
         studentGrid.add(logoutButtonBox2, 0, 4);
         
+        Button addCourseButton = new Button("Voeg toe");
+        HBox addCourseButtonBox = new HBox(10);
+        addCourseButtonBox.setAlignment(Pos.BOTTOM_LEFT);
+        addCourseButtonBox.getChildren().add(addCourseButton);
+        studentGrid.add(addCourseButtonBox, 1, 4);
+        
+        ObservableList list = FXCollections.observableArrayList();
+        for(Course c: Course.courses)
+        {
+            list.add(c.getName());
+        }
+        ChoiceBox cb = new ChoiceBox(list);
+        studentGrid.add(cb, 0, 2); 
+        
+        ListView<String> listView = new ListView<>();
+        ObservableList<String> items = FXCollections.observableArrayList ();        
+        studentGrid.add(listView, 0, 3);
+        
         Scene studentScene = new Scene(studentGrid, FRAME_WIDTH, FRAME_HEIGHT);
         
         //Button functionality
@@ -168,6 +190,12 @@ public class StudentDataManager extends Application
                     {
                         setLoggedIn(getStudent(idNumber));
                         studentTitle.setText("Welkom " + getLoggedIn().getFirstName());
+                        items.clear();
+                        for(Course c: loggedIn.getCourses())
+                        {
+                            items.add(c.getName());
+                        }
+                        listView.setItems(items);
                         primaryStage.setScene(studentScene);
                     }
                 }
@@ -232,6 +260,23 @@ public class StudentDataManager extends Application
             primaryStage.setScene(loginScene);
         });
         
+        addCourseButton.setOnAction((ActionEvent e) -> {
+            for(Course c: Course.courses)
+            {
+                if(c.getName().equals(cb.getValue()) &! loggedIn.getCourses().contains(c))
+                {                    
+                    loggedIn.addCourse(c);
+                    items.clear();
+                    for(Course cc: loggedIn.getCourses())
+                    {
+                        items.add(cc.getName());
+                    }
+                    listView.setItems(items);
+                    saveData();
+                }
+            }
+        });
+        
         primaryStage.setScene(loginScene);
         primaryStage.show();
     }
@@ -281,7 +326,8 @@ public class StudentDataManager extends Application
     }
     
     private void loadData()
-    {
+    {        
+        Course.load(PATH + "courses.txt");
         String data = DataHandler.loadData(PATH + "studentendata.txt");
         for(String studentData: XMLReader.getElementsPlus("student", data))
         {

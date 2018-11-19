@@ -6,20 +6,32 @@
 
 package studentendatamanager;
 
-public enum Course 
+import java.util.ArrayList;
+
+public class Course 
 {
-    Math("Mathematics 101", "Everyone's favorite subject", 5),
-    Physics("Physics 101", "Let's get physical", 5);
-    
     private String name, description;
     private int ECT;
+    public static ArrayList<Course> courses;
 
-    private Course(String name, String description, int ECT)
+    public Course(String name, String description, int ECT)
     {
         this.name = name;
         this.description = description;
         this.ECT = ECT;
     }
+    
+    public static void load(String path)
+    {
+        courses = new ArrayList();
+        ArrayList<String> courseStrings = DataHandler.loadDataList(path);
+        for(String courseString: courseStrings)
+        {
+            String[] courseData = courseString.split(",");
+            courses.add(new Course(courseData[0], courseData[1], Integer.parseInt(courseData[2])));
+        }
+    }
+            
 
     public String getName()
     {

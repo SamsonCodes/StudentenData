@@ -38,13 +38,16 @@ public class Student
         this.studyScore = Integer.parseInt(XMLReader.getAttribute("studyScore", saveData));
         this.year = Integer.parseInt(XMLReader.getAttribute("year", saveData));
         courses = new ArrayList();
-        for(String course: XMLReader.getElementPlus("courses", saveData).split(","))
+        String courseData = XMLReader.stripTags("courses",XMLReader.getElementPlus("courses", saveData));
+        //System.out.println(firstName + ": courseData=" + courseData);
+        for(String course: courseData.split(","))
         {
-            for(Course c: Course.values())
+            for(Course c: Course.courses)
             {
                 if(course.equals(c.getName()))
                 {
                     courses.add(c);
+                    //System.out.println(firstName + ": added " + c.getName());
                 }
             }
         }
