@@ -139,18 +139,23 @@ public class StudentDataManager extends Application
         
         TableView<Student> studentTable = new TableView();
         Label studentTableLabel = new Label("Studenten");
+        studentTableLabel.setFont(Font.font("Tahoma", FontWeight.BOLD, 20));
         studentTable.setEditable(false);
+        TableColumn idCol = new TableColumn("ID-nummer");
         TableColumn firstNameCol = new TableColumn("Voornaam");
         TableColumn lastNameCol = new TableColumn("Achternaam");
+        TableColumn birthDateCol = new TableColumn("Verjaardag");
         TableColumn yearCol = new TableColumn("Jaar");
         ObservableList<Student> studentTableItems = FXCollections.observableArrayList();
+        idCol.setCellValueFactory(new PropertyValueFactory<>("idNumber"));
         firstNameCol.setCellValueFactory(new PropertyValueFactory<>("firstName"));
         lastNameCol.setCellValueFactory(new PropertyValueFactory<>("lastName"));
+        birthDateCol.setCellValueFactory(new PropertyValueFactory<>("birthDate"));
         yearCol.setCellValueFactory(new PropertyValueFactory<>("year"));    
-        studentTable.getColumns().addAll(firstNameCol, lastNameCol, yearCol);
+        studentTable.getColumns().addAll(idCol, firstNameCol, lastNameCol, birthDateCol, yearCol);
         final VBox studentVbox = new VBox();
-        studentVbox.setSpacing(5);
-        studentVbox.setPadding(new Insets(10, 0, 0, 10));
+        studentVbox.setSpacing(5); //space between components (label and table)
+        studentVbox.setPadding(new Insets(0, 0, 0, 0)); //ofset top, right, bottom, left
         studentVbox.getChildren().addAll(studentTableLabel, studentTable);
         inputGrid.add(studentVbox, 0, 5, 4, 1);
         
@@ -193,9 +198,10 @@ public class StudentDataManager extends Application
         studentGrid.add(addCourseButtonBox, 1, 1);
         
         TableView<Course> courseTable = new TableView();
-        Label tableLabel = new Label("Vakken");
+//        Label tableLabel = new Label("Vakken");
+//        tableLabel.setFont(Font.font("Tahoma", FontWeight.BOLD, 24));
         courseTable.setEditable(false);
-        TableColumn nameCol = new TableColumn("Naam");
+        TableColumn nameCol = new TableColumn("Vak");
         nameCol.setPrefWidth(200);
         TableColumn descriptionCol = new TableColumn("Omschrijving");
         descriptionCol.setPrefWidth(500);
@@ -207,9 +213,9 @@ public class StudentDataManager extends Application
         scoreCol.setCellValueFactory(new PropertyValueFactory<>("ECT"));    
         courseTable.getColumns().addAll(nameCol, descriptionCol, scoreCol);
         final VBox vbox = new VBox();
-        vbox.setSpacing(5);
-        vbox.setPadding(new Insets(0,0,0,0));
-        vbox.getChildren().addAll(tableLabel, courseTable);
+        vbox.setSpacing(5); //space between components (label and table)
+        vbox.setPadding(new Insets(0,0,0,0)); //ofset top, right, bottom, left
+        vbox.getChildren().add(courseTable);
         studentGrid.add(vbox, 0, 2, 4, 1);    
         
         Button delCourseButton = new Button("Verwijder");
