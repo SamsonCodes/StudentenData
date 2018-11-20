@@ -175,26 +175,8 @@ public class StudentDataManager extends Application
         studentGrid.setPadding(new Insets(25, 25, 25, 25));
         
         Text studentTitle = new Text("Welkom ");
-        scenetitle.setFont(Font.font("Tahoma", FontWeight.NORMAL, 30));
-        studentGrid.add(studentTitle, 0, 0, 2, 1);           
-        
-        Button studentLogoutButton = new Button("Log uit");
-        HBox logoutButtonBox2 = new HBox(10);
-        logoutButtonBox2.setAlignment(Pos.BOTTOM_LEFT);
-        logoutButtonBox2.getChildren().add(studentLogoutButton);
-        studentGrid.add(logoutButtonBox2, 0, 4);
-        
-        Button addCourseButton = new Button("Voeg toe");
-        HBox addCourseButtonBox = new HBox(10);
-        addCourseButtonBox.setAlignment(Pos.BOTTOM_LEFT);
-        addCourseButtonBox.getChildren().add(addCourseButton);
-        studentGrid.add(addCourseButtonBox, 1, 4);
-        
-        Button delCourseButton = new Button("Verwijder");
-        HBox delCourseButtonBox = new HBox(10);
-        delCourseButtonBox.setAlignment(Pos.BOTTOM_LEFT);
-        delCourseButtonBox.getChildren().add(delCourseButton);
-        studentGrid.add(delCourseButtonBox, 2, 4);
+        studentTitle.setFont(Font.font("Tahoma", FontWeight.NORMAL, 30));
+        studentGrid.add(studentTitle, 0, 0, 2, 1);        
         
         ObservableList list = FXCollections.observableArrayList();
         for(Course c: Course.courses)
@@ -202,14 +184,23 @@ public class StudentDataManager extends Application
             list.add(c.getName());
         }
         ChoiceBox cb = new ChoiceBox(list);
-        studentGrid.add(cb, 0, 2);      
+        studentGrid.add(cb, 0, 1);   
+        
+        Button addCourseButton = new Button("Voeg toe");
+        HBox addCourseButtonBox = new HBox(10);
+        addCourseButtonBox.setAlignment(Pos.BOTTOM_LEFT);
+        addCourseButtonBox.getChildren().add(addCourseButton);
+        studentGrid.add(addCourseButtonBox, 1, 1);
         
         TableView<Course> courseTable = new TableView();
         Label tableLabel = new Label("Vakken");
         courseTable.setEditable(false);
         TableColumn nameCol = new TableColumn("Naam");
+        nameCol.setPrefWidth(200);
         TableColumn descriptionCol = new TableColumn("Omschrijving");
+        descriptionCol.setPrefWidth(500);
         TableColumn scoreCol = new TableColumn("ECT");
+        scoreCol.setPrefWidth(50);
         ObservableList<Course> courseTableItems = FXCollections.observableArrayList();
         nameCol.setCellValueFactory(new PropertyValueFactory<>("name"));
         descriptionCol.setCellValueFactory(new PropertyValueFactory<>("description"));
@@ -217,13 +208,25 @@ public class StudentDataManager extends Application
         courseTable.getColumns().addAll(nameCol, descriptionCol, scoreCol);
         final VBox vbox = new VBox();
         vbox.setSpacing(5);
-        vbox.setPadding(new Insets(10, 0, 0, 10));
+        vbox.setPadding(new Insets(0,0,0,0));
         vbox.getChildren().addAll(tableLabel, courseTable);
-        studentGrid.add(vbox, 0, 3);    
+        studentGrid.add(vbox, 0, 2, 4, 1);    
+        
+        Button delCourseButton = new Button("Verwijder");
+        HBox delCourseButtonBox = new HBox(10);
+        delCourseButtonBox.setAlignment(Pos.BOTTOM_RIGHT);
+        delCourseButtonBox.getChildren().add(delCourseButton);
+        studentGrid.add(delCourseButtonBox, 3, 3);
+        
+        Button studentLogoutButton = new Button("Log uit");
+        HBox logoutButtonBox2 = new HBox(10);
+        logoutButtonBox2.setAlignment(Pos.BOTTOM_LEFT);
+        logoutButtonBox2.getChildren().add(studentLogoutButton);
+        studentGrid.add(logoutButtonBox2, 0, 4);
         
         Scene studentScene = new Scene(studentGrid, FRAME_WIDTH, FRAME_HEIGHT);
         
-        //Button functionality
+    //Button functionality
         loginButton.setOnAction((ActionEvent e) ->
         {
             loginMessage.setText("");
