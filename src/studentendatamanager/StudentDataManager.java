@@ -43,7 +43,7 @@ public class StudentDataManager extends Application
     private static int id = 10000;
     private ArrayList<Student> students = new ArrayList();
     public final static SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH);
-    private final static int FRAME_WIDTH = 500, FRAME_HEIGHT = 500;
+    private final static int FRAME_WIDTH = 1000, FRAME_HEIGHT = 800;
     private Student loggedIn;
     
 
@@ -100,6 +100,12 @@ public class StudentDataManager extends Application
         scenetitle2.setFont(Font.font("Tahoma", FontWeight.NORMAL, 30));
         inputGrid.add(scenetitle2, 0, 0, 2, 1);
         
+        Button inputLogoutButton = new Button("Log uit");
+        HBox logoutButtonBox = new HBox(10);
+        logoutButtonBox.setAlignment(Pos.BOTTOM_LEFT);
+        logoutButtonBox.getChildren().add(inputLogoutButton);
+        inputGrid.add(logoutButtonBox, 0, 7);
+        
         Label firstNameLabel = new Label("Voornaam: ");
         inputGrid.add(firstNameLabel, 0, 1);
 
@@ -113,25 +119,25 @@ public class StudentDataManager extends Application
         inputGrid.add(lastNameField, 1, 2);
         
         Label dateLabel = new Label("Geboorte datum: ");
-        inputGrid.add(dateLabel, 0, 3);
+        inputGrid.add(dateLabel, 0, 3);   
         
         TextField dateField = new TextField();
         dateField.setText("dd/MM/yyyy");
-        inputGrid.add(dateField, 1, 3);          
+        inputGrid.add(dateField, 1, 3);      
+        
+        Label yearLabel = new Label("Studiejaar: ");
+        inputGrid.add(yearLabel, 2, 1);
+        
+        TextField yearField = new TextField();
+        inputGrid.add(yearField, 3, 1);
 
         Button addStudentButton = new Button("Voeg toe");
         HBox addButtonBox = new HBox(10);
         addButtonBox.setAlignment(Pos.BOTTOM_RIGHT);
         addButtonBox.getChildren().add(addStudentButton);
-        inputGrid.add(addButtonBox, 1, 5);  
+        inputGrid.add(addButtonBox, 3, 4);  
         
-        Button inputLogoutButton = new Button("Log uit");
-        HBox logoutButtonBox = new HBox(10);
-        logoutButtonBox.setAlignment(Pos.BOTTOM_LEFT);
-        logoutButtonBox.getChildren().add(inputLogoutButton);
-        inputGrid.add(logoutButtonBox, 0, 5);
-        
-        TableView studentTable = new TableView();
+        TableView<Student> studentTable = new TableView();
         Label studentTableLabel = new Label("Studenten");
         studentTable.setEditable(false);
         TableColumn firstNameCol = new TableColumn("Voornaam");
@@ -146,10 +152,16 @@ public class StudentDataManager extends Application
         studentVbox.setSpacing(5);
         studentVbox.setPadding(new Insets(10, 0, 0, 10));
         studentVbox.getChildren().addAll(studentTableLabel, studentTable);
-        inputGrid.add(studentVbox, 0, 4);
+        inputGrid.add(studentVbox, 0, 5, 4, 1);
+        
+        Button removeStudentButton = new Button("Verwijder");
+        HBox removeStudentBox = new HBox(20);
+        removeStudentBox.setAlignment(Pos.BOTTOM_RIGHT);
+        removeStudentBox.getChildren().add(removeStudentButton);
+        inputGrid.add(removeStudentBox, 3, 6);
         
         final Text inputMessage = new Text();
-        inputGrid.add(inputMessage, 1, 6);
+        inputGrid.add(inputMessage, 1, 7);
 		
 		//grid2.setGridLinesVisible(true);
 		
@@ -178,6 +190,12 @@ public class StudentDataManager extends Application
         addCourseButtonBox.getChildren().add(addCourseButton);
         studentGrid.add(addCourseButtonBox, 1, 4);
         
+        Button delCourseButton = new Button("Verwijder");
+        HBox delCourseButtonBox = new HBox(10);
+        delCourseButtonBox.setAlignment(Pos.BOTTOM_LEFT);
+        delCourseButtonBox.getChildren().add(delCourseButton);
+        studentGrid.add(delCourseButtonBox, 2, 4);
+        
         ObservableList list = FXCollections.observableArrayList();
         for(Course c: Course.courses)
         {
@@ -186,21 +204,21 @@ public class StudentDataManager extends Application
         ChoiceBox cb = new ChoiceBox(list);
         studentGrid.add(cb, 0, 2);      
         
-        TableView table = new TableView();
+        TableView<Course> courseTable = new TableView();
         Label tableLabel = new Label("Vakken");
-        table.setEditable(false);
+        courseTable.setEditable(false);
         TableColumn nameCol = new TableColumn("Naam");
         TableColumn descriptionCol = new TableColumn("Omschrijving");
         TableColumn scoreCol = new TableColumn("ECT");
-        ObservableList<Course> tableItems = FXCollections.observableArrayList();
+        ObservableList<Course> courseTableItems = FXCollections.observableArrayList();
         nameCol.setCellValueFactory(new PropertyValueFactory<>("name"));
         descriptionCol.setCellValueFactory(new PropertyValueFactory<>("description"));
         scoreCol.setCellValueFactory(new PropertyValueFactory<>("ECT"));    
-        table.getColumns().addAll(nameCol, descriptionCol, scoreCol);
+        courseTable.getColumns().addAll(nameCol, descriptionCol, scoreCol);
         final VBox vbox = new VBox();
         vbox.setSpacing(5);
         vbox.setPadding(new Insets(10, 0, 0, 10));
-        vbox.getChildren().addAll(tableLabel, table);
+        vbox.getChildren().addAll(tableLabel, courseTable);
         studentGrid.add(vbox, 0, 3);    
         
         Scene studentScene = new Scene(studentGrid, FRAME_WIDTH, FRAME_HEIGHT);
@@ -230,14 +248,13 @@ public class StudentDataManager extends Application
                     if(studentInSystem(idNumber))
                     {
                         setLoggedIn(getStudent(idNumber));
-                        studentTitle.setText("Welkom " + getLoggedIn().getFirstName());  
-                        tableItems.clear();
+                        studentTitle.setText(getLoggedIn().getFirstName() + " " + getLoggedIn().getLastName() + " (s" + getLoggedIn().getIdNumber() + ")");  
+                        courseTableItems.clear();
                         for(Course c: getLoggedIn().getCourses())
                         {
-                            tableItems.add(c);
-                            System.out.println("Added " + c.getName() + " to course table!");
+                            courseTableItems.add(c);
                         }                        
-                        table.setItems(tableItems);
+                        courseTable.setItems(courseTableItems);
                         primaryStage.setScene(studentScene);
                     }
                 }
@@ -253,13 +270,16 @@ public class StudentDataManager extends Application
         {     
             boolean add = true;
             Date birthDate = new Date();
+            int year = 0;
             String firstName = firstNameField.getText();            
             String lastName = lastNameField.getText();
             firstNameField.setText("");
             lastNameField.setText("");
             String dateString = dateField.getText();
             dateField.setText("");
-            if(firstName.isEmpty() || lastName.isEmpty() || dateString.isEmpty())
+            String yearString = yearField.getText();
+            yearField.setText("");
+            if(firstName.isEmpty() || lastName.isEmpty() || dateString.isEmpty() |! isNumeric(yearString))
             {
                 add = false;
             }            
@@ -274,11 +294,12 @@ public class StudentDataManager extends Application
                     add = false;
                     Logger.getLogger(StudentDataManager.class.getName()).log(Level.SEVERE, null, ex);
                 }
+                year = Integer.parseInt(yearString);
             }
             if(add)
             {
                 Date enrollDate = new Date();
-                Student student = new Student(firstName, lastName, id, birthDate, enrollDate);
+                Student student = new Student(firstName, lastName, id, birthDate, enrollDate, year);
                 id++;
                 students.add(student);
                 studentTableItems.add(student);
@@ -292,6 +313,17 @@ public class StudentDataManager extends Application
                 inputMessage.setFill(Color.FIREBRICK);
                 inputMessage.setText("Ingevoerde data ongeldig!");
             }
+        });
+        
+        removeStudentButton.setOnAction((ActionEvent e) ->
+        {
+            Student target = studentTable.getSelectionModel().getSelectedItem();
+            students.remove(target);
+            studentTableItems.remove(target);
+            studentTable.setItems(studentTableItems);
+            inputMessage.setFill(Color.FIREBRICK);
+            inputMessage.setText("s" + target.getIdNumber() + " verwijderd");
+            saveData();
         });
         
         inputLogoutButton.setOnAction((ActionEvent e) ->
@@ -310,11 +342,20 @@ public class StudentDataManager extends Application
                 if(c.getName().equals(cb.getValue()) &! loggedIn.getCourses().contains(c))
                 {                    
                     loggedIn.addCourse(c);
-                    tableItems.add(c);
-                    table.setItems(tableItems);
+                    courseTableItems.add(c);
+                    courseTable.setItems(courseTableItems);
                     saveData();
                 }
             }
+        });
+        
+        delCourseButton.setOnAction((ActionEvent e) ->
+        {
+            Course target = courseTable.getSelectionModel().getSelectedItem();
+            getLoggedIn().getCourses().remove(target);
+            courseTableItems.remove(target);
+            courseTable.setItems(courseTableItems);
+            saveData();
         });
         
         primaryStage.setScene(loginScene);

@@ -55,7 +55,7 @@ public class Student
         System.out.println(toString() + " created");
     }
 
-    public Student(String firstName, String lastName, int idNumber, Date birthDate, Date enrollDate)
+    public Student(String firstName, String lastName, int idNumber, Date birthDate, Date enrollDate, int year)
     {
         this.firstName = firstName;
         this.lastName = lastName;
@@ -63,7 +63,7 @@ public class Student
         this.birthDate = birthDate;
         this.enrollDate = enrollDate;
         courses = new ArrayList<>();
-        year = 1;
+        this.year = year;
         System.out.println(toString() + " created");
     }
 
