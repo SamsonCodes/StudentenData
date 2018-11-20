@@ -7,18 +7,20 @@
 package studentendatamanager;
 
 import java.util.ArrayList;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleStringProperty;
 
 public class Course 
 {
-    private String name, description;
-    private int ECT;
+    private SimpleStringProperty name, description;
+    private SimpleIntegerProperty ECT;
     public static ArrayList<Course> courses;
 
     public Course(String name, String description, int ECT)
     {
-        this.name = name;
-        this.description = description;
-        this.ECT = ECT;
+        this.name = new SimpleStringProperty(name);
+        this.description = new SimpleStringProperty(description);
+        this.ECT = new SimpleIntegerProperty(ECT);
     }
     
     public static void load(String path)
@@ -35,17 +37,17 @@ public class Course
 
     public String getName()
     {
-        return name;
+        return name.get();
     }
 
     public String getDescription()
     {
-        return description;
+        return description.get();
     }
 
     public int getECT()
     {
-        return ECT;
+        return ECT.get();
     }
     
     

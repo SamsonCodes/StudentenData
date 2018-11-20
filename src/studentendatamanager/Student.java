@@ -14,7 +14,8 @@ import java.util.logging.Logger;
 public class Student
 {
 
-    private String firstName, lastName;
+    private String firstName;
+    private String lastName;
     private int idNumber;
     private Date birthDate, enrollDate;
     private ArrayList<Course> courses;
@@ -24,7 +25,7 @@ public class Student
     public Student(String saveData)
     {
         this.firstName = XMLReader.getAttribute("firstName", saveData);
-        this.lastName = XMLReader.getAttribute("lastName", saveData);
+        this.lastName = XMLReader.getAttribute("lastName", saveData);        
         this.idNumber = Integer.parseInt(XMLReader.getAttribute("idNumber", saveData));
         try
         {
@@ -51,7 +52,7 @@ public class Student
                 }
             }
         }
-        
+        System.out.println(toString() + " created");
     }
 
     public Student(String firstName, String lastName, int idNumber, Date birthDate, Date enrollDate)
@@ -69,6 +70,11 @@ public class Student
     public String getFirstName()
     {
         return firstName;
+    }
+    
+    public String getLastName()
+    {
+        return lastName;
     }
 
     public int getIdNumber()
