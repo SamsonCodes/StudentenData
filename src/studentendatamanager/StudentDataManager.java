@@ -307,10 +307,26 @@ public class StudentDataManager extends Application
         addButtonBox.getChildren().add(addStudentButton);
         inputGrid.add(addButtonBox, 3, 4);  
         
+        Text searchTitle = new Text("Zoeken");
+        searchTitle.setFont(Font.font("Tahoma", FontWeight.NORMAL, 30));
+        inputGrid.add(searchTitle, 0, 5, 2, 1);
+        
+        Label searchLabel = new Label("Achternaam: ");
+        inputGrid.add(searchLabel, 0, 6);
+
+        TextField searchField = new TextField();
+        inputGrid.add(searchField, 1, 6);        
+
+        Button searchButton = new Button("Zoeken");
+        HBox searchButtonBox = new HBox(10);
+        searchButtonBox.setAlignment(Pos.BOTTOM_RIGHT);
+        searchButtonBox.getChildren().add(searchButton);
+        inputGrid.add(searchButtonBox, 2, 6);  
+        
         studentTable = new TableView();
         Label studentTableLabel = new Label("Studenten");
         studentTableLabel.setFont(Font.font("Tahoma", FontWeight.BOLD, 20));
-        studentTable.setEditable(false);
+        studentTable.setEditable(true);
         TableColumn idCol = new TableColumn("ID-nummer");
         TableColumn firstNameCol = new TableColumn("Voornaam");
         TableColumn lastNameCol = new TableColumn("Achternaam");
@@ -328,16 +344,16 @@ public class StudentDataManager extends Application
         studentVbox.setSpacing(5); //space between components (label and table)
         studentVbox.setPadding(new Insets(0, 0, 0, 0)); //ofset top, right, bottom, left
         studentVbox.getChildren().addAll(studentTableLabel, studentTable);
-        inputGrid.add(studentVbox, 0, 5, 4, 1);
+        inputGrid.add(studentVbox, 0, 7, 4, 1);
         
         Button removeStudentButton = new Button("Verwijder");
         HBox removeStudentBox = new HBox(20);
         removeStudentBox.setAlignment(Pos.BOTTOM_RIGHT);
         removeStudentBox.getChildren().add(removeStudentButton);
-        inputGrid.add(removeStudentBox, 3, 6);
+        inputGrid.add(removeStudentBox, 3, 8);
         
         final Text inputMessage = new Text();
-        inputGrid.add(inputMessage, 1, 7);
+        inputGrid.add(inputMessage, 1, 9);
 		
         //inputGrid.setGridLinesVisible(true);
                 
@@ -404,6 +420,22 @@ public class StudentDataManager extends Application
         inputLogoutButton.setOnAction((ActionEvent e) ->
         {
             window.setScene(loginScene);
+        });
+        
+        searchButton.setOnAction((ActionEvent e) ->
+        {
+            String name = searchField.getText();
+            int target = 0;
+            for(int i = 0; i < students.size(); i++)
+            {
+                if(students.get(i).getLastName().equals(name))
+                {
+                    target = i;
+                }
+            }
+            studentTable.requestFocus();
+            studentTable.getSelectionModel().select(target);
+            studentTable.getFocusModel().focus(target);
         });
 		
         studentInputScene = new Scene(inputGrid, FRAME_WIDTH, FRAME_HEIGHT);
