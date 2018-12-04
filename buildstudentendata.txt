@@ -1,0 +1,1 @@
+<student firstName="Samson" lastName="Daniel" idNumber="10000" birthDate="03/11/1992" enrollDate="29/11/2018" studyScore="0" year="1"><courses></courses></student>

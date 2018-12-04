@@ -1,0 +1,5 @@
+Wiskunde,Iedereens favoriete vak,5
+Natuurkunde,Natuurlijk wil je dat leren,5
+Programmeren,Het vak van de toekomst,10
+Geschiedenis,Waar gaat dit vak ook alweer over?,5
+Nederlands,Waarom zou je je hiervoor inschrijven?,10

@@ -6,6 +6,8 @@
 package studentendatamanager;
 
 import java.io.File;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -43,7 +45,8 @@ import javafx.stage.Stage;
 public class StudentDataManager extends Application
 {
 
-    private final static String TITLE = "StudentApp", PATH = "C:\\StudentenDataManager\\";
+    private final static String TITLE = "StudentApp",
+            RESOURCE_PATH = "C:\\Users\\Samson\\Documents\\NetBeansProjects\\StudentenDataManager\\src\\studentendatamanager\\resources\\";
     private String folder;
     private static int id = 10000;
     private ArrayList<Student> students = new ArrayList();
@@ -51,13 +54,29 @@ public class StudentDataManager extends Application
     private final static int FRAME_WIDTH = 1000, FRAME_HEIGHT = 800;
     private Student loggedIn;
     Stage window;
-    Scene directoryScene, loginScene, studentInputScene, studentScene;
+    Scene changeDirScene, loginScene, studentInputScene, studentScene;
     TableView<Student> studentTable;
     TableView<Course> courseTable;
     ChoiceBox choiceBox;
     ObservableList<Student> studentTableItems;
     ObservableList<Course> courseTableItems;
     ObservableList<String> choiceList;
+
+    public StudentDataManager()
+    {
+        String path = StudentDataManager.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+        String newPath = new File(path).getParentFile().getPath(); 
+        try
+        {
+            folder = URLDecoder.decode(newPath, "UTF-8") + "\\";
+            loadCourseData();
+            loadStudentData();  
+        }
+        catch (UnsupportedEncodingException ex)
+        {
+            Logger.getLogger(StudentDataManager.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
     
     
 
@@ -67,8 +86,8 @@ public class StudentDataManager extends Application
         window = primaryStage;
         primaryStage.setTitle(TITLE);
         
-    //Directory Chooser Scene        
-        buildDirectoryScene();
+    //Change Directory Scene        
+        buildChangeDirScene();
         
     //Login Scene
         buildLoginScene();
@@ -76,93 +95,10 @@ public class StudentDataManager extends Application
     //Student Input Scene
         buildStudentInputScene();
         
-    //Select action scene
-//        VBox actionBox = new VBox();
-//        actionBox.setPadding(new Insets(10));
-//        actionBox.setSpacing(5);
-//        
-//        Button studentInputButton = new Button("Voeg studente toe");
-//        Button courseInputButton = new Button("Voeg vakken toe");
-//        
-//        actionBox.getChildren().addAll(studentInputButton, courseInputButton);
-//        
-//        Scene selectActionScene = new Scene(actionBox, FRAME_WIDTH, FRAME_HEIGHT);
-        
-    //Course input scene
-//        GridPane courseInputGrid = new GridPane();
-//        courseInputGrid.setAlignment(Pos.CENTER);
-//        courseInputGrid.setHgap(10);
-//        courseInputGrid.setVgap(10);
-//        courseInputGrid.setPadding(new Insets(25, 25, 25, 25));
-//        
-//        Text courseInputTitle = new Text("Welkom ");
-//        courseInputTitle.setFont(Font.font("Tahoma", FontWeight.NORMAL, 30));
-//        courseInputGrid.add(courseInputTitle, 0, 0, 2, 1);  
-//        
-//        Label courseNameLabel = new Label("Naam");
-//        courseInputGrid.add(courseNameLabel, 0, 1);
-//
-//        TextField courseNameField = new TextField();
-//        courseInputGrid.add(courseNameField, 1, 1);
-//        
-//        Label courseDescLabel = new Label("Omschrijving");
-//        courseInputGrid.add(courseDescLabel, 0, 2);
-//
-//        TextField courseDescField = new TextField();
-//        courseInputGrid.add(courseDescField, 1, 2);
-//        
-//        Label courseScoreLabel = new Label("ECT");
-//        courseInputGrid.add(courseScoreLabel, 0, 3);
-//
-//        TextField courseScoreField = new TextField();
-//        courseInputGrid.add(courseScoreField, 1, 3);
-//        
-//        Button addCourseBtn = new Button("Voeg toe");
-//        HBox addCourseBtnBox = new HBox(10);
-//        addCourseBtnBox.setAlignment(Pos.BOTTOM_RIGHT);
-//        addCourseBtnBox.getChildren().add(addStudentButton);
-//        courseInputGrid.add(addButtonBox, 3, 4);  
-//        
-//        TableView<Student> courseTable1 = new TableView();
-//        Label courseTable1Label = new Label("Vakken");
-//        courseTable1Label.setFont(Font.font("Tahoma", FontWeight.BOLD, 20));
-//        courseTable1.setEditable(false);
-//        TableColumn courseNameCol = new TableColumn("Naam");
-//        TableColumn courseDescCol = new TableColumn("Omschrijving");
-//        TableColumn courseScoreCol = new TableColumn("ECT");
-//        ObservableList<Course> courseTable1Items = FXCollections.observableArrayList();
-//        courseNameCol.setCellValueFactory(new PropertyValueFactory<>("name"));    
-//        courseDescCol.setCellValueFactory(new PropertyValueFactory<>("description")); 
-//        courseScoreCol.setCellValueFactory(new PropertyValueFactory<>("ECT"));
-//        studentTable.getColumns().addAll(idCol, firstNameCol, lastNameCol, birthDateCol, yearCol);
-//        final VBox courseInputVBox = new VBox();
-//        courseInputVBox.setSpacing(5); //space between components (label and table)
-//        courseInputVBox.setPadding(new Insets(0, 0, 0, 0)); //ofset top, right, bottom, left
-//        courseInputVBox.getChildren().addAll(studentTableLabel, studentTable);
-//        inputGrid.add(courseInputVBox, 0, 5, 4, 1);
-//        
-//        Scene courseInputScene = new Scene(courseInputGrid, FRAME_WIDTH, FRAME_HEIGHT);
-        
-        
     //Student enrollment scene
         buildStudentScene();
         
-//        studentInputButton.setOnAction((ActionEvent e) ->
-//        {
-//            primaryStage.setScene(studentInputScene);
-//        });
-//        
-//        courseInputButton.setOnAction((ActionEvent e) ->
-//        {
-//            primaryStage.setScene(courseInputScene);
-//        });
-        
-//        addCourseBtn.setOnAction((ActionEvent e) ->
-//        {
-//            
-//        });
-        
-        primaryStage.setScene(directoryScene);
+        primaryStage.setScene(loginScene);
         primaryStage.show();
     }
     
@@ -176,14 +112,14 @@ public class StudentDataManager extends Application
         return false;
     }
     
-    private void buildDirectoryScene()
+    private void buildChangeDirScene()
     {
         final DirectoryChooser directoryChooser = new DirectoryChooser();
         configuringDirectoryChooser(directoryChooser);
  
         TextArea directoryText = new TextArea();
         directoryText.setMinHeight(70);
-        directoryText.setText(PATH);
+        directoryText.setText(folder);
  
         Button chooseDirButton = new Button("Wijzig folder");
  
@@ -193,7 +129,7 @@ public class StudentDataManager extends Application
             public void handle(ActionEvent event) {
                 File dir = directoryChooser.showDialog(window);
                 if (dir != null) {
-                    directoryText.setText(dir.getAbsolutePath() + "\\StudentenDataManager\\");                    
+                    directoryText.setText(dir.getAbsolutePath() + "\\");                    
                 } else {
                     directoryText.setText(null);
                 }
@@ -221,7 +157,7 @@ public class StudentDataManager extends Application
         dirBox.setSpacing(5);
  
         dirBox.getChildren().addAll(directoryText, chooseDirButton, goToLoginButton);         
-        directoryScene = new Scene(dirBox, FRAME_WIDTH, FRAME_HEIGHT);
+        changeDirScene = new Scene(dirBox, FRAME_WIDTH, FRAME_HEIGHT);
     }
     
     private void buildLoginScene()
@@ -255,6 +191,12 @@ public class StudentDataManager extends Application
         hbBtn.setAlignment(Pos.BOTTOM_RIGHT);
         hbBtn.getChildren().add(loginButton);
         loginGrid.add(hbBtn, 1, 4);
+        
+        Button changeDirBtn = new Button("Wijzig folder");
+        HBox cdbBox = new HBox(10);
+        cdbBox.setAlignment(Pos.BOTTOM_LEFT);
+        cdbBox.getChildren().add(changeDirBtn);
+        loginGrid.add(cdbBox, 0, 4);
         
         final Text loginMessage = new Text();
         loginGrid.add(loginMessage, 0, 6, 3, 1);
@@ -305,6 +247,11 @@ public class StudentDataManager extends Application
                 loginMessage.setFill(Color.FIREBRICK);
                 loginMessage.setText("Combinatie gebruikersnaam en wachtwoord onbekend");
             }
+        });
+        
+        changeDirBtn.setOnAction((ActionEvent e) ->
+        {
+            window.setScene(changeDirScene);
         });
 
         //loginGrid.setGridLinesVisible(true);
@@ -586,6 +533,7 @@ public class StudentDataManager extends Application
     private void loadStudentData()
     { 
         String data = DataHandler.loadData(folder + "studentendata.txt");
+        students.clear();
         for(String studentData: XMLReader.getElementsPlus("student", data))
         {
             Student student = new Student(studentData);
@@ -599,7 +547,7 @@ public class StudentDataManager extends Application
     
     private void loadCourseData()
     {
-        Course.load(folder + "courses.txt");
+        Course.load(RESOURCE_PATH + "courses.txt");
     }
     
     private void saveData()
