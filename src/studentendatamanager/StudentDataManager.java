@@ -311,7 +311,7 @@ public class StudentDataManager extends Application
         searchTitle.setFont(Font.font("Tahoma", FontWeight.NORMAL, 30));
         inputGrid.add(searchTitle, 0, 5, 2, 1);
         
-        Label searchLabel = new Label("Achternaam: ");
+        Label searchLabel = new Label("ID-nummer: ");
         inputGrid.add(searchLabel, 0, 6);
 
         TextField searchField = new TextField();
@@ -424,18 +424,39 @@ public class StudentDataManager extends Application
         
         searchButton.setOnAction((ActionEvent e) ->
         {
-            String name = searchField.getText();
-            int target = 0;
-            for(int i = 0; i < students.size(); i++)
+            String input = searchField.getText();
+            if(input.startsWith("s"));
             {
-                if(students.get(i).getLastName().equals(name))
+                input = input.replace("s", "");
+            }
+            if(isNumeric(input))
+            {
+                int number = Integer.parseInt(input);
+                int target = -1;
+                for(int i = 0; i < students.size(); i++)
                 {
-                    target = i;
+                    if(students.get(i).getIdNumber() == number)
+                    {
+                        target = i;
+                    }
+                }
+                if(target != -1)
+                {
+                    studentTable.requestFocus();
+                    studentTable.getSelectionModel().select(target);
+                    studentTable.getFocusModel().focus(target);
+                }
+                else
+                {
+                    inputMessage.setFill(Color.FIREBRICK);
+                    inputMessage.setText("Kan nummer niet vinden!");
                 }
             }
-            studentTable.requestFocus();
-            studentTable.getSelectionModel().select(target);
-            studentTable.getFocusModel().focus(target);
+            else
+            {
+                inputMessage.setFill(Color.FIREBRICK);
+                inputMessage.setText("Zoeken: Ongeldige invoer!");
+            }
         });
 		
         studentInputScene = new Scene(inputGrid, FRAME_WIDTH, FRAME_HEIGHT);
