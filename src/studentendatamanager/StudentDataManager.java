@@ -62,6 +62,7 @@ public class StudentDataManager extends Application
     ObservableList<Student> studentTableItems;
     ObservableList<Course> courseTableItems;
     ObservableList<String> choiceList;
+    Text studentTitle;
 
     public StudentDataManager()
     {
@@ -241,6 +242,16 @@ public class StudentDataManager extends Application
                         choiceBox.setItems(choiceList);
                         window.setScene(studentScene);
                     }
+                    else
+                    {
+                        loginMessage.setFill(Color.FIREBRICK);
+                        loginMessage.setText("Combinatie gebruikersnaam en wachtwoord onbekend");
+                    }
+                }
+                else
+                {
+                    loginMessage.setFill(Color.FIREBRICK);
+                    loginMessage.setText("Combinatie gebruikersnaam en wachtwoord onbekend");
                 }
             }
             else
@@ -491,7 +502,7 @@ public class StudentDataManager extends Application
         studentGrid.setVgap(10);
         studentGrid.setPadding(new Insets(25, 25, 25, 25));
         
-        Text studentTitle = new Text("Welkom ");
+        studentTitle = new Text("Welkom");
         studentTitle.setFont(Font.font("Tahoma", FontWeight.NORMAL, 30));
         studentGrid.add(studentTitle, 0, 0, 2, 1);        
         
@@ -616,6 +627,7 @@ public class StudentDataManager extends Application
     private void setLoggedIn(Student s)
     {
         loggedIn = s;
+        studentTitle.setText("Welkom s" + s.getIdNumber());
     }
     
     private Student getLoggedIn()
