@@ -23,6 +23,7 @@ import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.chart.PieChart;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
@@ -54,7 +55,7 @@ public class StudentDataManager extends Application
     private final static int FRAME_WIDTH = 1000, FRAME_HEIGHT = 800;
     private Student loggedIn;
     Stage window;
-    Scene changeDirScene, loginScene, studentInputScene, studentScene;
+    Scene changeDirScene, loginScene, studentInputScene, studentScene, pieScene;
     TableView<Student> studentTable;
     TableView<Course> courseTable;
     ChoiceBox choiceBox;
@@ -274,7 +275,7 @@ public class StudentDataManager extends Application
         HBox logoutButtonBox = new HBox(10);
         logoutButtonBox.setAlignment(Pos.BOTTOM_LEFT);
         logoutButtonBox.getChildren().add(inputLogoutButton);
-        inputGrid.add(logoutButtonBox, 0, 7);
+        inputGrid.add(logoutButtonBox, 0, 10);
         
         Label firstNameLabel = new Label("Voornaam: ");
         inputGrid.add(firstNameLabel, 0, 1);
@@ -331,7 +332,7 @@ public class StudentDataManager extends Application
         TableColumn firstNameCol = new TableColumn("Voornaam");
         TableColumn lastNameCol = new TableColumn("Achternaam");
         TableColumn birthDateCol = new TableColumn("Verjaardag");
-        TableColumn yearCol = new TableColumn("Jaar");
+        TableColumn yearCol = new TableColumn("Jaar");        
         studentTableItems = FXCollections.observableArrayList();
         idCol.setCellValueFactory(new PropertyValueFactory<>("idNumber"));
         firstNameCol.setCellValueFactory(new PropertyValueFactory<>("firstName"));
@@ -351,6 +352,12 @@ public class StudentDataManager extends Application
         removeStudentBox.setAlignment(Pos.BOTTOM_RIGHT);
         removeStudentBox.getChildren().add(removeStudentButton);
         inputGrid.add(removeStudentBox, 3, 8);
+        
+        Button pieButton = new Button("Cirkeldiagram");
+        HBox pieBox = new HBox(20);
+        pieBox.setAlignment(Pos.BOTTOM_LEFT);
+        pieBox.getChildren().add(pieButton);
+        inputGrid.add(pieBox, 0, 9);
         
         final Text inputMessage = new Text();
         inputGrid.add(inputMessage, 1, 9);
@@ -386,6 +393,14 @@ public class StudentDataManager extends Application
                     Logger.getLogger(StudentDataManager.class.getName()).log(Level.SEVERE, null, ex);
                 }
                 year = Integer.parseInt(yearString);
+                if(year > 5)
+                {
+                    year = 5;
+                }
+                else if(year < 1)
+                {
+                    year = 1;
+                }
             }
             if(add)
             {
@@ -457,6 +472,12 @@ public class StudentDataManager extends Application
                 inputMessage.setFill(Color.FIREBRICK);
                 inputMessage.setText("Zoeken: Ongeldige invoer!");
             }
+        });
+        
+        pieButton.setOnAction((ActionEvent e) ->
+        {
+            buildPieScene();
+            window.setScene(pieScene);
         });
 		
         studentInputScene = new Scene(inputGrid, FRAME_WIDTH, FRAME_HEIGHT);
@@ -549,6 +570,36 @@ public class StudentDataManager extends Application
         });
     }
     
+    public void buildPieScene()
+    {
+        GridPane grid = new GridPane();
+        grid.setAlignment(Pos.CENTER);
+        grid.setHgap(10);
+        grid.setVgap(10);
+        grid.setPadding(new Insets(25, 25, 25, 25));
+        
+        ObservableList<PieChart.Data> pieChartData =
+                FXCollections.observableArrayList(
+                new PieChart.Data("Jaar1 (" + getStudentAmount(1) + ")", getStudentAmount(1)),
+                new PieChart.Data("Jaar2 (" + getStudentAmount(2) + ")", getStudentAmount(2)),
+                new PieChart.Data("Jaar3 (" + getStudentAmount(3) + ")", getStudentAmount(3)),
+                new PieChart.Data("Jaar4 (" + getStudentAmount(4) + ")", getStudentAmount(4)),
+                new PieChart.Data("Jaar5 (" + getStudentAmount(5) + ")", getStudentAmount(5)));
+        final PieChart chart = new PieChart(pieChartData);
+        chart.setTitle("Studenten");
+        
+        grid.add(chart, 0, 0);
+        
+        Button goBackBtn = new Button("Ga terug");
+        grid.add(goBackBtn, 0, 1);
+        goBackBtn.setOnAction((ActionEvent e) ->
+        {
+            window.setScene(studentInputScene);
+        });
+        
+        pieScene = new Scene(grid, FRAME_WIDTH, FRAME_HEIGHT);
+    }
+    
     public static boolean isNumeric(String str)  
     {  
       try  
@@ -570,6 +621,21 @@ public class StudentDataManager extends Application
     private Student getLoggedIn()
     {
         return loggedIn;
+    }
+    
+    private int getStudentAmount(int year)
+    {
+        int amount = 0;
+        for(Student s: students)
+        {
+            System.out.println("s" + s.getIdNumber() + ": " + s.getYear());
+            if(s.getYear() == year)
+            {
+                amount++;
+            }
+        }
+        System.out.println("Year" + year + " = " + amount);
+        return amount;
     }
     
     private Student getStudent(int idNumber)
